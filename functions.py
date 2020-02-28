@@ -64,11 +64,18 @@ def max_value(state,depth,global_player):
     v = -100000
     state.calc_legal()
     #print(state.legal_moves)
-    for move in state.legal_moves:
-        next_state=copy.deepcopy(state)
-        tmp_depth=depth+1 # reduntant
-        v=max(v, min_value(next_state.move(move), tmp_depth,global_player))
-        #TODO om spelaren får en extra runda måste vi räkna med det också
+    #TODO ha en som kollar om förra staten gav en extra tur då ska vi göra samma sak igen. Så i denna är det Max som kallar max.
+    if state.extra_turn == True:
+        for move in state.legal_moves:
+            next_state = copy.deepcopy(state)
+            tmp_depth = depth + 1  # reduntant
+            v = min(v,max_value(next_state.move(move),tmp_depth,global_player))
+    else:
+        for move in state.legal_moves:
+            next_state=copy.deepcopy(state)
+            tmp_depth=depth+1 # reduntant
+            v=max(v, min_value(next_state.move(move), tmp_depth,global_player))
+            #TODO om spelaren får en extra runda måste vi räkna med det också
     return v
 
 def min_value(state,depth,global_player):
@@ -81,10 +88,16 @@ def min_value(state,depth,global_player):
     v= 100000
     state.calc_legal()
     #print(state.legal_moves)
-    for move in state.legal_moves:
-        next_state=copy.deepcopy(state)
-        tmp_depth=depth+1
-        v=min(v,max_value(next_state.move(move),tmp_depth,global_player))
+    if state.extra_turn == True:
+        for move in state.legal_moves:
+            next_state=copy.deepcopy(state)
+            tmp_depth=depth+1 # reduntant
+            v=max(v, min_value(next_state.move(move), tmp_depth,global_player))
+    else:
+        for move in state.legal_moves:
+            next_state=copy.deepcopy(state)
+            tmp_depth=depth+1
+            v=min(v,max_value(next_state.move(move),tmp_depth,global_player))
     return v
 
 
