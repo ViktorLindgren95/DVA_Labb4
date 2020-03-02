@@ -23,7 +23,8 @@ def minmax(player_num,board):
     if len(start_state.legal_moves)>1:
         for move in start_state.legal_moves:
             next_state=copy.deepcopy(start_state)
-            v=max_value(next_state.move(move),1,player_num) # Move function totally busted fix this, Its moving in general
+            # next_state=next_state.move(2)
+            v=min_value(next_state.move(move),1,player_num) # Move function totally busted fix this, Its moving in general
             #print("Tested Move is ",move)
             #print("v is ",v)
             if v>move_v:
@@ -32,10 +33,10 @@ def minmax(player_num,board):
 
 
         start_state.move(m)
-        if start_state.extra_turn == True:
-            print("Extra Turn")
+        # if start_state.extra_turn == True:
+        #     print("Extra Turn")
         m+=1
-        print("Move is ",m)
+        #print("Move is ",m)
         if m>7:
             m=m-7
         stuff_in_string = f'{m}'
@@ -55,30 +56,30 @@ def minmax(player_num,board):
 
 
 def max_value(state,depth,global_player):
-    if global_player == 1:
-        state.player_num=1
+    if state.extra_turn==True:
+        state.extra_turn=False
+        return min_value(state,depth,global_player)
     else:
-        state.player_num=2
-    if depth == 3: # this is our default ? use the depth here?
-        return state.utility()
-    v = -100000
-    state.calc_legal()
-    #print(state.legal_moves)
-    #TODO ha en som kollar om förra staten gav en extra tur då ska vi göra samma sak igen. Så i denna är det Max som kallar max.
-    if state.extra_turn == True:
-        for move in state.legal_moves:
-            next_state = copy.deepcopy(state)
-            tmp_depth = depth + 1  # reduntant
-            v = min(v,max_value(next_state.move(move),tmp_depth,global_player))
-    else:
+        if global_player == 1:
+            state.player_num=1
+        else:
+            state.player_num=2
+        if depth == 3: # this is our default ? use the depth here?
+            return state.utility()
+        v = -100000
+        state.calc_legal()
+        #print(state.legal_moves)
         for move in state.legal_moves:
             next_state=copy.deepcopy(state)
             tmp_depth=depth+1 # reduntant
             v=max(v, min_value(next_state.move(move), tmp_depth,global_player))
             #TODO om spelaren får en extra runda måste vi räkna med det också
-    return v
+        return v
 
 def min_value(state,depth,global_player):
+    if state.extra_turn==True:
+        state.extra_turn=False
+        return max_value(state,depth,global_player)
     if global_player == 1:
         state.player_num=2
     else:
@@ -88,16 +89,10 @@ def min_value(state,depth,global_player):
     v= 100000
     state.calc_legal()
     #print(state.legal_moves)
-    if state.extra_turn == True:
-        for move in state.legal_moves:
-            next_state=copy.deepcopy(state)
-            tmp_depth=depth+1 # reduntant
-            v=max(v, min_value(next_state.move(move), tmp_depth,global_player))
-    else:
-        for move in state.legal_moves:
-            next_state=copy.deepcopy(state)
-            tmp_depth=depth+1
-            v=min(v,max_value(next_state.move(move),tmp_depth,global_player))
+    for move in state.legal_moves:
+        next_state=copy.deepcopy(state)
+        tmp_depth=depth+1
+        v=min(v,max_value(next_state.move(move),tmp_depth,global_player))
     return v
 
 

@@ -24,7 +24,7 @@ def send(socket, msg):
 
 
 # VARIABLES
-playerName = 'Viktor Lindgren'
+playerName = 'Viktor Lindgren_2'
 host = '127.0.0.1'
 port = 30000  # Reserve a port for your service.
 s = socket.socket()  # Create a socket object
